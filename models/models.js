@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-
-// Définir un schéma
 const user_schema = new mongoose.Schema({
     createdAt: {
         type: Date,

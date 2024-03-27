@@ -10,13 +10,13 @@ const PORT = process.env.PORT || 8080;
 require('./config/database.js');
 
 // Routes
-const authRoutes = require('./routes/todo'); // Assurez-vous que le chemin est correct.
+const authRoutes = require('./routes/todo');
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Utilisez authRoutes pour toutes les demandes adressées à /auth
+// demandes adressées à /auth
 app.use('/auth', authRoutes);
 
 app.listen(PORT, () => {
