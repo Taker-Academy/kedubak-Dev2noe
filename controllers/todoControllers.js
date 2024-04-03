@@ -9,12 +9,12 @@ exports.register = async (req, res) => {
         const { email, password, firstName, lastName } = req.body;
 
         if (!email || !password || !firstName || !lastName) {
-            return res.status(400).json('Tous les champs sont requis');
+            return res.status(400).send({ok: false, error: 'Tous les champs sont requis'});
         }
         // Vérifier si l'utilisateur existe déjà
         let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.status(401).send('Cet email est déjà utilisé.');
+            return res.status(401).send({ok: false, error: 'Cet email est déjà utilisé.'});
         }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -27,14 +27,12 @@ exports.register = async (req, res) => {
         });
         // Enregistre l'utilisateur dans la base de données
         await user.save();
-
         // Générer un token JWT
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '24h' }
         );
-
         res.status(201).send({
         ok: true,
         data: {
@@ -47,33 +45,32 @@ exports.register = async (req, res) => {
         }
         });
         } catch (error) {
-            res.status(500).send({ message: 'Erreur interne du serveur.', error: error.message });
+            res.status(500).send({ ok: false, error: 'Erreur interne du serveur.'});
         }
 };
 
 exports.login = async (req, res) => {
     try {
+        const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).json('Tous les champs sont requis');
+            return res.status(400).send({ok: false, error: 'Tous les champs sont requis'});
         }
         // Chercher l'utilisateur par email
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.status(401).send('Aucun utilisateur trouvé avec cet email.');
+            return res.status(401).send({ok: false, error: 'Aucun utilisateur trouvé avec cet email.'});
         }
         // Comparer le mot de passe fourni avec celui de la base de données
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (!isMatch) {
-            return res.status(401).send('Mot de passe incorrect.');
+            return res.status(401).send({ok: false, error : 'Mot de passe incorrect.'});
         }
-
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
-
-        res.satus(200).send({
+        res.status(200).send({
             ok: true,
             data: {
             token: token,
@@ -86,6 +83,6 @@ exports.login = async (req, res) => {
         });
         } catch (error) {
         console.error(error);
-        res.status(500).send('Erreur interne du serveur.');
+        res.status(500).send({ok: false, error: 'Erreur interne du serveur.'});
         }
   };

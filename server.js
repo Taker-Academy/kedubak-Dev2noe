@@ -10,14 +10,16 @@ const PORT = process.env.PORT || 8080;
 require('./config/database.js');
 
 // Routes
-const authRoutes = require('./routes/todo');
+const authRoutes = require('./routes/auth.js');
+const userRoutes = require('./routes/user.js');
 
+app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// demandes adressées à /auth
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
