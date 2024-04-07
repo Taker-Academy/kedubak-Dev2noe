@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const user_schema = new mongoose.Schema({
     createdAt: {
         type: Date,
@@ -32,39 +33,43 @@ const user_schema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', user_schema);
-module.exports = User;
 
-const post_schema = new mongoose.Schema({
+const commentSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
     },
     userId: {
-        type: String,
-        require: true,
-    },
-    firstName: {
-        type: String,
-        require: true,
-    },
-    title: {
-        type: String,
-        require: true,
+        type: Schema.Types.ObjectId,
+        required: true,
     },
     content: {
         type: String,
-        require: true,
+        required: true,
     },
-    comments: {
-        type: Array,
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
-        id: {
-            type: String,
-            require: true,
-        },
-    },
+});
 
-})
+const postSchema = new Schema({
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    title: {
+        type: String,
+        required: true,
+    },
+    content: {
+        type: String,
+        required: true,
+    },
+    comments: [commentSchema],
+});
+
+const Post = mongoose.model('Post', postSchema);
+
+module.exports = { User, Post };
