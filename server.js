@@ -13,6 +13,7 @@ require('./config/database.js');
 const authRoutes = require('./routes/auth.js');
 const userRoutes = require('./routes/user.js');
 const postRoutes = require('./routes/post.js');
+const commentRoutes = require('./routes/comment.js');
 
 app.use(express.json());
 app.use(cors());
@@ -22,7 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/post', postRoutes);
+app.use('/comment', commentRoutes);
 
-app.listen(PORT, () => {
+app.listen(8080, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

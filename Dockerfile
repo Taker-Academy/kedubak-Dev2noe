@@ -1,12 +1,13 @@
 FROM node:18
 
-WORKDIR /app
+RUN mkdir usr/src/app
+WORKDIR usr/src/app
 
-COPY package*.json ./
+COPY package.json .
 
 RUN npm install
 
-COPY . .
+COPY ./ .
 
 EXPOSE 8080
 

@@ -1,4 +1,3 @@
-// authController.js
 const User = require('../models/userModel.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -9,12 +8,12 @@ exports.register = async (req, res) => {
         const { email, password, firstName, lastName } = req.body;
 
         if (!email || !password || !firstName || !lastName) {
-            return res.status(400).send({ok: false, error: 'Tous les champs sont requis'});
+            return res.status(400).json({ok: false, error: 'Tous les champs sont requis'});
         }
         // Vérifier si l'utilisateur existe déjà
         let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.status(401).send({ok: false, error: 'Cet email est déjà utilisé.'});
+            return res.status(401).json({ok: false, error: 'Cet email est déjà utilisé.'});
         }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -33,7 +32,7 @@ exports.register = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-        res.status(201).send({
+        res.status(201).json({
         ok: true,
         data: {
             token: token,
@@ -45,7 +44,7 @@ exports.register = async (req, res) => {
         }
         });
         } catch (error) {
-            res.status(500).send({ ok: false, error: 'Erreur interne du serveur.'});
+            res.status(500).json({ ok: false, error: 'Erreur interne du serveur.'});
         }
 };
 
@@ -53,24 +52,24 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).send({ok: false, error: 'Tous les champs sont requis'});
+            return res.status(400).json({ok: false, error: 'Tous les champs sont requis'});
         }
         // Chercher l'utilisateur par email
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.status(401).send({ok: false, error: 'Aucun utilisateur trouvé avec cet email.'});
+            return res.status(401).json({ok: false, error: 'Aucun utilisateur trouvé avec cet email.'});
         }
         // Comparer le mot de passe fourni avec celui de la base de données
         const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (!isMatch) {
-            return res.status(401).send({ok: false, error : 'Mot de passe incorrect.'});
+            return res.status(401).json({ok: false, error : 'Mot de passe incorrect.'});
         }
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
-        res.status(200).send({
+        res.status(200).json({
             ok: true,
             data: {
             token: token,
@@ -83,6 +82,6 @@ exports.login = async (req, res) => {
         });
         } catch (error) {
         console.error(error);
-        res.status(500).send({ok: false, error: 'Erreur interne du serveur.'});
+        res.status(500).json({ok: false, error: 'Erreur interne du serveur.'});
         }
   };

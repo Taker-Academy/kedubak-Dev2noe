@@ -23,11 +23,7 @@ const user_schema = new mongoose.Schema({
     },
     lastUpVote: {
         type: Date,
-        default: () => {
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - 1);
-            return now;
-        },
+        default: undefined,
     },
 });
 
