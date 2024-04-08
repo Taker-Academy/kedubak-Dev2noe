@@ -1,3 +1,0 @@
-MONGO_URL: 'l'url de votre base de donnée mongoDb Atlas'
-PORT: //port sur lequel l'application sera exposer
-JWT_SECRET: 'votre_secret_jwt'
